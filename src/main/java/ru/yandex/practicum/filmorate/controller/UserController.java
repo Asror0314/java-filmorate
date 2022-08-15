@@ -21,8 +21,8 @@ public class UserController {
     public Collection<User> getUsers(){
 //        User user = User.builder().id(1).name("as")
 //                .email("as@s").login("sasd").build();
-        User user = new User(1, "asd", "sa", "Sas", LocalDate.now());
-        users.put(1,user);
+//        User user = new User(1, "asd", "sa", "Sas", LocalDate.now());
+//        users.put(1,user);
         log.debug("Получен запрос GET /users");
         return users.values();
     }
