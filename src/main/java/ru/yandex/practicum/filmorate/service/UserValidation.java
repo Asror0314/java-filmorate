@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
 import ru.yandex.practicum.filmorate.exception.ContainsException;
+import ru.yandex.practicum.filmorate.exception.LessThanZeroException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -37,8 +38,10 @@ public class UserValidation {
                 users.put(user.getId(), user);
             }
             return user;
-        } else {
+        } else if(user.getId() >= 0){
             throw new ContainsException("This user does not exist");
+        } else {
+            throw new LessThanZeroException("Less than zero");
         }
     }
 
