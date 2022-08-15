@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
 import ru.yandex.practicum.filmorate.exception.ContainsException;
+import ru.yandex.practicum.filmorate.exception.LessThanZeroException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
@@ -22,15 +23,11 @@ public class FilmValidation {
     }
 
     public Film addFilm(final Film film){
-        if(!films.containsKey(film.getId()) ) {
             if (valid(film)) {
                 film.setId(++idFilmGenerated);
                 films.put(film.getId(), film);
             }
             return film;
-        } else {
-            throw new ContainsException("This film already exists");
-        }
     }
 
     public Film updateFilm(final Film film){
@@ -39,8 +36,10 @@ public class FilmValidation {
                 films.put(film.getId(), film);
             }
             return film;
+        } else if(film.getId() >= 0){
+            throw new ContainsException("This film does not exist");
         } else {
-            throw new ContainsException("This user does not exist");
+            throw new LessThanZeroException("Less than zero");
         }
     }
 
@@ -48,7 +47,7 @@ public class FilmValidation {
         if(film.getName().isBlank()
                 || film.getDescription().length()>200
                 || film.getDuration()<0
-                || film.getReleaseDate().isAfter(RELEASEDATE)) {
+                || film.getReleaseDate().isBefore(RELEASEDATE)) {
             throw new ValidationException("Validation failed");
         } else {
             return true;
