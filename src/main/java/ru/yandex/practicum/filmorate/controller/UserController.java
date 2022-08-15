@@ -54,7 +54,7 @@ public class UserController {
         }
         return user;
     }
-    
+
     private boolean valid(final User user){
         if(user.getLogin().isBlank()
                 || user.getEmail().isBlank()
