@@ -24,7 +24,7 @@ public class FilmController {
         return films.values();
     }
 
-    @PostMapping("/film")
+    @PostMapping("/films")
     public Film addFilm(@RequestBody final Film film){
         log.debug("Получен запрос Post /film");
         if(films.containsKey(film.getId())) {
@@ -35,7 +35,7 @@ public class FilmController {
         return film;
     }
 
-    @PatchMapping("/film")
+    @PatchMapping("/films")
     public Film updateFilm(@RequestBody final Film film){
         log.debug("Получен запрос Patch /film");
         if(films.containsKey(film.getId())) {

@@ -23,7 +23,7 @@ public class UserController {
         return users.values();
     }
 
-    @PostMapping("/user")
+    @PostMapping("/users")
     public User addUser(@RequestBody final User user){
         log.debug("Получен запрос Post /user");
         if(!users.containsKey(user.getId()) ) {
@@ -39,7 +39,7 @@ public class UserController {
         return user;
     }
 
-    @PatchMapping("/user")
+    @PatchMapping("/users")
     public User updateUser(@RequestBody final User user){
         log.debug("Получен запрос Patch /user");
         if(users.containsKey(user.getId()) ) {
@@ -63,6 +63,6 @@ public class UserController {
         } else {
             return true;
         }
-        
+
     }
 }
