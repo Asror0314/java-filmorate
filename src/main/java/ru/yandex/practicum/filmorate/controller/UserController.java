@@ -19,6 +19,10 @@ public class UserController {
 
     @GetMapping("/users")
     public Collection<User> getUsers(){
+//        User user = User.builder().id(1).name("as")
+//                .email("as@s").login("sasd").build();
+        User user = new User(1, "asd", "sa", "Sas", LocalDate.now());
+        users.put(1,user);
         log.debug("Получен запрос GET /users");
         return users.values();
     }
@@ -58,7 +62,7 @@ public class UserController {
     private boolean valid(final User user){
         if(user.getLogin().isBlank()
                 || user.getEmail().isBlank()
-                || user.getEmail().contains("@") || user.getBirthday().isBefore(LocalDate.now())) {
+                || !user.getEmail().contains("@") ){//|| user.getBirthday().isBefore(LocalDate.now())) {
             throw new ValidationException("Validation failed");
         } else {
             return true;
