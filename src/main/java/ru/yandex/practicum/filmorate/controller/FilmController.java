@@ -24,7 +24,7 @@ public class FilmController {
         return filmValid.addFilm(film);
     }
 
-    @PatchMapping("/films")
+    @PutMapping("/films")
     public Film updateFilm(@RequestBody final Film film){
         log.debug("Получен запрос Patch /film");
         return filmValid.updateFilm(film);
