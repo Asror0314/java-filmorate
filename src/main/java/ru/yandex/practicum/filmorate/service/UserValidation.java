@@ -13,7 +13,6 @@ public class UserValidation {
 
     private int idUserGenerated = 0;
     private final Map<Integer, User> users = new HashMap();
-
     public Collection<User> getUsers(){
         return users.values();
     }
@@ -25,10 +24,10 @@ public class UserValidation {
                 nameIsBlank(user);
                 users.put(user.getId(), user);
             }
+            return user;
         } else {
             throw new ContainsException("This user already exists");
         }
-        return user;
     }
 
     public User updateUser(final User user){
@@ -37,10 +36,10 @@ public class UserValidation {
                 nameIsBlank(user);
                 users.put(user.getId(), user);
             }
+            return user;
         } else {
             throw new ContainsException("This user does not exist");
         }
-        return user;
     }
 
     private boolean valid(final User user){
@@ -48,7 +47,7 @@ public class UserValidation {
                 || user.getEmail().isBlank()
                 || !user.getEmail().contains("@")
                 || user.getBirthday().isAfter(LocalDate.now())) {
-            return false;
+            throw new ValidationException("Validation failed");
         } else {
             return true;
         }

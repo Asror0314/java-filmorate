@@ -27,10 +27,10 @@ public class FilmValidation {
                 film.setId(++idFilmGenerated);
                 films.put(film.getId(), film);
             }
+            return film;
         } else {
             throw new ContainsException("This film already exists");
         }
-        return film;
     }
 
     public Film updateFilm(final Film film){
@@ -38,10 +38,10 @@ public class FilmValidation {
             if (valid(film)) {
                 films.put(film.getId(), film);
             }
+            return film;
         } else {
             throw new ContainsException("This user does not exist");
         }
-        return film;
     }
 
     private boolean valid(final Film film){
