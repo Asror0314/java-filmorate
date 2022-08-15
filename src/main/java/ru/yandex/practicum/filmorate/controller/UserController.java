@@ -24,7 +24,7 @@ public class UserController {
         return userValid.addUser(user);
     }
 
-    @PatchMapping("/users")
+    @PutMapping("/users")
     public User updateUser(@RequestBody final User user){
         log.debug("Получен запрос Patch /user");
         return userValid.updateUser(user);
