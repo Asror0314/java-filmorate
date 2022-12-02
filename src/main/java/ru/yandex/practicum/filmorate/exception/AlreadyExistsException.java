@@ -5,9 +5,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)
 
-public class ContainsException extends RuntimeException {
+public class AlreadyExistsException extends RuntimeException {
 
-    public ContainsException(String message) {
+    public AlreadyExistsException(String message) {
         super(message);
     }
 }
