@@ -2,31 +2,31 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
-import java.util.Collection;
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/films")
 @Slf4j
 public class FilmController {
 
-    private final FilmStorage filmStorage;
     private final FilmService filmService;
 
     @Autowired
-    public FilmController(FilmStorage filmStorage, FilmService filmService) {
-        this.filmStorage = filmStorage;
+    public FilmController(final FilmService filmService) {
         this.filmService = filmService;
     }
 
     @GetMapping
-    public Collection<Film> getFilms(){
+    public List<Film> getFilms(){
         log.debug("Получен запрос GET /films");
-        return filmStorage.getFilms();
+        return filmService.getFilms();
     }
 
     @GetMapping("/{id}")
@@ -34,24 +34,37 @@ public class FilmController {
             @PathVariable final int id
     ){
         log.debug("Получен запрос GET /films/{id}");
-        return filmStorage.getFilmById(id);
+        return filmService.getFilmById(id);
     }
 
     @PostMapping
-    public Film addFilm(@RequestBody final Film film){
+    public Film addFilm(
+            @Valid @RequestBody final Film film,
+            BindingResult result
+    ){
+        if(result.hasErrors()) {
+            throw new ValidationException(result.getFieldError().getDefaultMessage());
+        }
         log.debug("Получен запрос Post /films");
-        return filmStorage.addFilm(film);
+        return filmService.addFilm(film);
     }
 
     @PutMapping
-    public Film updateFilm(@RequestBody final Film film){
+    public Film updateFilm(
+            @Valid @RequestBody final Film film,
+            BindingResult result
+    ){
+        if(result.hasErrors()) {
+            throw new ValidationException(result.getFieldError().getDefaultMessage());
+        }
         log.debug("Получен запрос Put /films");
-        return filmStorage.updateFilm(film);
+        return filmService.updateFilm(film);
     }
 
     @GetMapping("/popular")
-    public Collection<Film> getPopularFilms(
-            @RequestParam(defaultValue = "2", required = false) String count) {
+    public List<Film> getPopularFilms(
+            @RequestParam(defaultValue = "2", required = false) String count
+    ) {
         log.debug("Получен запрос Get /films/popular");
         return filmService.getPopularFilms(Integer.parseInt(count));
     }

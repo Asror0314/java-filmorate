@@ -3,9 +3,14 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
+
+import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -18,6 +23,23 @@ public class UserService {
     @Autowired
     public UserService(UserStorage userStorage) {
         this.userStorage = userStorage;
+    }
+
+    public List<User> getUsers(){
+        return userStorage.getUsers();
+    }
+
+    public User getUserById(final int id){
+        return userStorage.getUserById(id);
+    }
+    public User addUser(final User user){
+        nameIsBlank(user);
+        return userStorage.addUser(user);
+    }
+
+    public User updateUser(final User user){
+        nameIsBlank(user);
+        return userStorage.updateUser(user);
     }
 
     public List<User> getFriends(
@@ -36,19 +58,11 @@ public class UserService {
             final int otherId
     ) {
         final List<User> commonFriends = new ArrayList<>();
-        final List<Integer> userFriendsList = getFriendsIdList(id);
-        final List<Integer> otherUserFriendsList = getFriendsIdList(otherId);
+        final Set<Integer> userFriendsList = getFriendsIdList(id);
+        final Set<Integer> otherUserFriendsList = getFriendsIdList(otherId);
 
-        List<Integer> commonIdList = userFriendsList
-                .stream()
-                .filter(p -> otherUserFriendsList.contains(p))
-                .collect(Collectors.toList());
-
-        if(!commonIdList.isEmpty()) {
-            for (Integer i : commonIdList) {
-                commonFriends.add(findUserById(i));
-            }
-        }
+        userFriendsList.retainAll(otherUserFriendsList);
+        userFriendsList.forEach(i -> commonFriends.add(findUserById(i)));
 
         return commonFriends;
     }
@@ -78,11 +92,11 @@ public class UserService {
         return user;
     }
 
-    private List<Integer> getFriendsIdList(final int id) {
+    private Set<Integer> getFriendsIdList(final int id) {
         return findUserById(id)
                 .getFriends()
                 .stream()
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     public User findUserById(final int id) {
@@ -92,5 +106,13 @@ public class UserService {
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException(String.format("User id = %d not found", id)));
     }
+
+    private User nameIsBlank(final User user){
+        if (user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
+        return user;
+    }
+
 }
 

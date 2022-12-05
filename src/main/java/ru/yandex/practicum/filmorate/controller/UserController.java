@@ -2,11 +2,13 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
-import java.util.Collection;
+
+import javax.validation.*;
 import java.util.List;
 
 @RestController
@@ -14,21 +16,17 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserStorage userStorage;
     private final UserService userService;
 
     @Autowired
-    public UserController(
-            final UserStorage userStorage,
-            final UserService userService) {
-        this.userStorage = userStorage;
+    public UserController(final UserService userService) {
         this.userService = userService;
     }
 
     @GetMapping
-    public Collection<User> getUsers(){
+    public List<User> getUsers(){
         log.debug("Получен запрос GET /users");
-        return userStorage.getUsers();
+        return userService.getUsers();
     }
 
     @GetMapping("/{id}")
@@ -36,21 +34,31 @@ public class UserController {
             @PathVariable final int id
     ){
         log.debug("Получен запрос GET /users/{id}");
-        return userStorage.getUserById(id);
+        return userService.getUserById(id);
     }
 
     @PostMapping
     public User addUser(
-            @RequestBody final User user){
-        log.debug("Получен запрос Post /user");
-        return userStorage.addUser(user);
+            @Valid @RequestBody final User user,
+            BindingResult result
+    ){
+        if(result.hasErrors()) {
+            throw new ValidationException(result.getFieldError().getDefaultMessage());
+        }
+        log.debug("Получен запрос Post /users");
+        return userService.addUser(user);
     }
 
     @PutMapping
     public User updateUser(
-            @RequestBody final User user){
-        log.debug("Получен запрос Patch /user");
-        return userStorage.updateUser(user);
+            @Valid @RequestBody final User user,
+            BindingResult result
+    ){
+        if(result.hasErrors()) {
+            throw new ValidationException(result.getFieldError().getDefaultMessage());
+        }
+        log.debug("Получен запрос Patch /users");
+        return userService.updateUser(user);
     }
 
     @GetMapping("/{id}/friends")

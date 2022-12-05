@@ -18,6 +18,12 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleValidation2(final javax.validation.ValidationException e) {
+        return new ErrorResponse(String.format("%s", e.getMessage()));
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFound(final NotFoundException e) {
         return new ErrorResponse(String.format("%s", e.getMessage()));
@@ -25,8 +31,8 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleNotFound(final Throwable e) {
-        return new ErrorResponse(String.format("%s", e.getMessage()));
+    public ErrorResponse handleThrowable(final Throwable e) {
+        return new ErrorResponse(String.format("Internal server error"));
     }
 
 }

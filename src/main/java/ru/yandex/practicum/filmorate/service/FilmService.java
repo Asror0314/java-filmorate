@@ -3,22 +3,50 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+
+import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class FilmService {
 
     private final FilmStorage filmStorage;
     private final UserService userService;
+    private static final LocalDate RELEASEDATE = LocalDate.of(1895,12,28);
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserService userService) {
+    public FilmService(
+            final FilmStorage filmStorage,
+            final UserService userService
+    ) {
         this.filmStorage = filmStorage;
         this.userService = userService;
     }
+
+    public List<Film> getFilms(){
+        return filmStorage.getFilms();
+    }
+
+    public Film getFilmById(final int id){
+        return filmStorage.getFilmById(id);
+    }
+
+    public Film addFilm(final Film film){
+        valid(film);
+        return filmStorage.addFilm(film);
+    }
+
+    public Film updateFilm(final Film film){
+        valid(film);
+        return filmStorage.updateFilm(film);
+    }
+
 
     public List<Film> getPopularFilms(
             final Integer count
@@ -26,11 +54,9 @@ public class FilmService {
         return filmStorage
                 .getFilms()
                 .stream()
-                .sorted((p0,p1)
-                        -> -1 * Integer.valueOf(p0.getLikes().size()).compareTo(p1.getLikes().size()))
+                .sorted(Comparator.comparing(Film::getLikesSize).reversed())
                 .limit(count)
-                .collect(Collectors.toList());
-
+                .collect(toList());
     }
 
     public Film addLike(
@@ -63,4 +89,9 @@ public class FilmService {
                 .orElseThrow(() -> new NotFoundException(String.format("Film id = %d not found", id)));
     }
 
+    private void valid(final Film film){
+        if(film.getReleaseDate().isBefore(RELEASEDATE)) {
+            throw new ValidationException(String.format("Validation failed"));
+        }
+    }
 }
