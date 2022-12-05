@@ -6,7 +6,6 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
-
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
@@ -91,7 +90,7 @@ public class FilmService {
 
     private void valid(final Film film){
         if(film.getReleaseDate().isBefore(RELEASEDATE)) {
-            throw new ValidationException(String.format("Validation failed"));
+            throw new ValidationException(String.format("Release Date value cannot be less than %s", RELEASEDATE));
         }
     }
 }

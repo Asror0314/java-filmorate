@@ -1,9 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
@@ -25,7 +22,7 @@ public class User {
     @NotBlank(message = "Login cannot be null")
     private String login;
 
-    @Past(message = "Date value cannot be in the future the present")
+    @Past(message = "Date value cannot be in the future")
     private LocalDate birthday;
     private final Set<Integer> friends = new HashSet<>();
 
