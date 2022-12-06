@@ -1,22 +1,37 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
-
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Past;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
-@Data
 @EqualsAndHashCode
+@Data
 public class User {
 
-    @EqualsAndHashCode.Include
     private int id;
-    @EqualsAndHashCode.Exclude
     private String name;
-    @EqualsAndHashCode.Exclude
+
+    @Email(message = "Email should be valid")
+    @NotBlank(message = "Email cannot be null")
     private String email;
-    @EqualsAndHashCode.Exclude
+
+    @NotBlank(message = "Login cannot be null")
     private String login;
-    @EqualsAndHashCode.Exclude
+
+    @Past(message = "Date value cannot be in the future")
     private LocalDate birthday;
+    private final Set<Integer> friends = new HashSet<>();
+
+    public void setFriends(final int id) {
+        friends.add(id);
+    }
+
+    public Set<Integer> getFriends() {
+        return friends;
+    }
 
 }

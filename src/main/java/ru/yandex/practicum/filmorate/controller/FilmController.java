@@ -1,32 +1,89 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.service.FilmValidation;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
-import java.util.Collection;
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
+@RequestMapping("/films")
 @Slf4j
 public class FilmController {
 
-    private final FilmValidation filmValid = new FilmValidation();
-    @GetMapping("/films")
-    public Collection<Film> getFilms(){
+    private final FilmService filmService;
+
+    @Autowired
+    public FilmController(final FilmService filmService) {
+        this.filmService = filmService;
+    }
+
+    @GetMapping
+    public List<Film> getFilms(){
         log.debug("Получен запрос GET /films");
-        return filmValid.getFilms();
+        return filmService.getFilms();
     }
 
-    @PostMapping("/films")
-    public Film addFilm(@RequestBody final Film film){
-        log.debug("Получен запрос Post /film");
-        return filmValid.addFilm(film);
+    @GetMapping("/{id}")
+    public Film getFilmById(
+            @PathVariable final int id
+    ){
+        log.debug("Получен запрос GET /films/{id}");
+        return filmService.getFilmById(id);
     }
 
-    @PutMapping("/films")
-    public Film updateFilm(@RequestBody final Film film){
-        log.debug("Получен запрос Patch /film");
-        return filmValid.updateFilm(film);
+    @PostMapping
+    public Film addFilm(
+            @Valid @RequestBody final Film film,
+            BindingResult result
+    ){
+        if(result.hasErrors()) {
+            throw new ValidationException(result.getFieldError().getDefaultMessage());
+        }
+        log.debug("Получен запрос Post /films");
+        return filmService.addFilm(film);
+    }
+
+    @PutMapping
+    public Film updateFilm(
+            @Valid @RequestBody final Film film,
+            BindingResult result
+    ){
+        if(result.hasErrors()) {
+            throw new ValidationException(result.getFieldError().getDefaultMessage());
+        }
+        log.debug("Получен запрос Put /films");
+        return filmService.updateFilm(film);
+    }
+
+    @GetMapping("/popular")
+    public List<Film> getPopularFilms(
+            @RequestParam(defaultValue = "2", required = false) String count
+    ) {
+        log.debug("Получен запрос Get /films/popular");
+        return filmService.getPopularFilms(Integer.parseInt(count));
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    public Film addLike(
+            @PathVariable int id,
+            @PathVariable int userId
+    ) {
+        log.debug("Получен запрос Put /films/{id}/like/{userId}");
+        return filmService.addLike(id, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public Film deleteLike(
+            @PathVariable int id,
+            @PathVariable int userId
+    ) {
+        log.debug("Получен запрос Delete /films/{id}/like/{userId}");
+        return filmService.deleteLike(id, userId);
     }
 }
