@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/films")
@@ -30,7 +31,7 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public Film getFilmById(
+    public Optional<Film> getFilmById(
             @PathVariable final int id
     ){
         log.debug("Получен запрос GET /films/{id}");
@@ -38,7 +39,7 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film addFilm(
+    public Optional<Film> addFilm(
             @Valid @RequestBody final Film film,
             BindingResult result
     ){
@@ -50,7 +51,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film updateFilm(
+    public Optional<Film> updateFilm(
             @Valid @RequestBody final Film film,
             BindingResult result
     ){
@@ -70,7 +71,7 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public Film addLike(
+    public Optional<Film> addLike(
             @PathVariable int id,
             @PathVariable int userId
     ) {
@@ -79,11 +80,13 @@ public class FilmController {
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public Film deleteLike(
+    public Optional<Film> deleteLike(
             @PathVariable int id,
             @PathVariable int userId
     ) {
         log.debug("Получен запрос Delete /films/{id}/like/{userId}");
         return filmService.deleteLike(id, userId);
     }
+
+
 }
