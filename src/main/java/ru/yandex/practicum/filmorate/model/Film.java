@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -28,7 +27,7 @@ public class Film {
     @Min(value = 0, message = "duration should not be less than 0")
     private Integer duration;
     private MPA mpa;
-    private Set<Genre> genres = new HashSet<>();
+    private List<Genre> genres = new ArrayList<>();
     private Set<Integer> likes = new HashSet<>();
 
     public Film(String name, String description, LocalDate releaseDate, Integer duration, MPA mpa) {
@@ -54,10 +53,10 @@ public class Film {
     public void setGenre(final Genre genre) {
         genres.add(genre);
     }
-    public void setGenres(Set<Genre> genres) {
+    public void setGenres(List<Genre> genres) {
         this.genres = genres;
     }
-    public Set<Genre> getGenres() {
+    public List<Genre> getGenres() {
         return genres;
     }
 

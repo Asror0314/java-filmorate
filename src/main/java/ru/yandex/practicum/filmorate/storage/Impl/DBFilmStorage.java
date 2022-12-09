@@ -55,7 +55,7 @@ public class DBFilmStorage implements FilmStorage {
             film.setId(getIdFilmFromDB());
             addGenreInDB(film);
 
-            return Optional.of(film);
+            return getFilmById(film.getId());
 
     }
 
@@ -72,7 +72,7 @@ public class DBFilmStorage implements FilmStorage {
 
         deleteGenreFromDBByFilmId(film);
         addGenreInDB(film);
-        return Optional.of(film);
+        return getFilmById(film.getId());
     }
 
     @Override
@@ -160,7 +160,7 @@ public class DBFilmStorage implements FilmStorage {
         final List<Genre> genres = jdbcTemplate
                 .query(sql, (rs, rowNum) -> makeGenre(rs), film.getId());
 
-        film.setGenres(genres.stream().collect(Collectors.toSet()));
+        film.setGenres(genres);
         return film;
     }
 
@@ -186,7 +186,9 @@ public class DBFilmStorage implements FilmStorage {
     private void addGenreInDB(final Film film) {
         final String sql = "INSERT INTO public.film_genre (film_id, genre_id) VALUES (?,?);";
 
-        for (Genre genre : film.getGenres()) {
+        final List<Genre> genres = film.getGenres().stream().distinct().collect(Collectors.toList());
+
+        for (Genre genre : genres) {
             jdbcTemplate.update(sql, film.getId(), genre.getId());
         }
     }
