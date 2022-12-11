@@ -1,12 +1,12 @@
 package ru.yandex.practicum.filmorate.storage.Impl;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
@@ -15,11 +15,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-public class DBUserStorage implements UserStorage {
+@Primary
+public class DbUserStorage implements UserStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public DBUserStorage(JdbcTemplate jdbcTemplate) {
+    public DbUserStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

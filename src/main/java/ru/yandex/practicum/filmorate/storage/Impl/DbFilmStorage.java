@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.Impl;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
@@ -16,11 +17,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-public class DBFilmStorage implements FilmStorage {
+@Primary
+public class DbFilmStorage implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public DBFilmStorage(JdbcTemplate jdbcTemplate) {
+    public DbFilmStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -56,7 +58,6 @@ public class DBFilmStorage implements FilmStorage {
             addGenreInDB(film);
 
             return getFilmById(film.getId());
-
     }
 
     @Override
@@ -72,6 +73,7 @@ public class DBFilmStorage implements FilmStorage {
 
         deleteGenreFromDBByFilmId(film);
         addGenreInDB(film);
+
         return getFilmById(film.getId());
     }
 

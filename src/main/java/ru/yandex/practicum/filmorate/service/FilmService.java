@@ -1,15 +1,12 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
-
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
@@ -26,7 +23,7 @@ public class FilmService {
 
     @Autowired
     public FilmService(
-            @Qualifier("DBFilmStorage") final FilmStorage filmStorage,
+            final FilmStorage filmStorage,
             final UserService userService
     ) {
         this.filmStorage = filmStorage;
@@ -46,21 +43,9 @@ public class FilmService {
         return filmStorage.addFilm(film);
     }
 
-    public Optional<Film> updateFilm(final Film film){
+    public Optional<Film> updateFilm(final Film film) {
         valid(film);
         return filmStorage.updateFilm(film);
-    }
-
-
-    public List<Film> getPopularFilms(
-            final Integer count
-    ) {
-        return filmStorage
-                .getFilms()
-                .stream()
-                .sorted(Comparator.comparing(Film::getLikesSize).reversed())
-                .limit(count)
-                .collect(toList());
     }
 
     public Optional<Film> addLike(
@@ -83,6 +68,15 @@ public class FilmService {
         return filmStorage.deleteLike(film, userId);
     }
 
+    public List<Film> getPopularFilms(final Integer count) {
+        return filmStorage
+                .getFilms()
+                .stream()
+                .sorted(Comparator.comparing(Film::getLikesSize).reversed())
+                .limit(count)
+                .collect(toList());
+    }
+
     public List<MPA> getMpa() {
         return filmStorage.getMpa();
     }
@@ -99,7 +93,7 @@ public class FilmService {
         return filmStorage.getGenreById(id);
     }
 
-            private void valid(final Film film){
+    private void valid(final Film film){
         if(film.getReleaseDate().isBefore(RELEASEDATE)) {
             throw new ValidationException(String.format("Release Date value cannot be less than %s", RELEASEDATE));
         }

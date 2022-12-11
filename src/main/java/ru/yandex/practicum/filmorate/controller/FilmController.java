@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -87,6 +86,5 @@ public class FilmController {
         log.debug("Получен запрос Delete /films/{id}/like/{userId}");
         return filmService.deleteLike(id, userId);
     }
-
 
 }
