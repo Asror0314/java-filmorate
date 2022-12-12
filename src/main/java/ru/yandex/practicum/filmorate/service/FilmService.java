@@ -2,13 +2,15 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -32,24 +34,41 @@ public class FilmService {
         return filmStorage.getFilms();
     }
 
-    public Film getFilmById(final int id){
+    public Optional<Film> getFilmById(final int id){
         return filmStorage.getFilmById(id);
     }
 
-    public Film addFilm(final Film film){
+    public Optional<Film> addFilm(final Film film){
         valid(film);
         return filmStorage.addFilm(film);
     }
 
-    public Film updateFilm(final Film film){
+    public Optional<Film> updateFilm(final Film film) {
         valid(film);
         return filmStorage.updateFilm(film);
     }
 
-
-    public List<Film> getPopularFilms(
-            final Integer count
+    public Optional<Film> addLike(
+            final int id,
+            final int userId
     ) {
+        final Film film = filmStorage.getFilmById(id).get();
+
+        userService.getUserById(userId);
+        return filmStorage.addLike(film, userId);
+    }
+
+    public Optional<Film> deleteLike(
+            final int id,
+            final int userId
+    ) {
+        final Film film = filmStorage.getFilmById(id).get();
+
+        userService.getUserById(userId);
+        return filmStorage.deleteLike(film, userId);
+    }
+
+    public List<Film> getPopularFilms(final Integer count) {
         return filmStorage
                 .getFilms()
                 .stream()
@@ -58,34 +77,20 @@ public class FilmService {
                 .collect(toList());
     }
 
-    public Film addLike(
-            final int id,
-            final int userId
-    ) {
-        final Film film = findFilmById(id);
-        userService.findUserById(userId);
-
-        film.setLikes(userId);
-        return film;
+    public List<MPA> getMpa() {
+        return filmStorage.getMpa();
     }
 
-    public Film deleteLike(
-            final int id,
-            final int userId
-    ) {
-        final Film film = findFilmById(id);
-        userService.findUserById(userId);
-
-        film.getLikes().removeIf(p -> p.equals(userId));
-        return film;
+    public Optional<MPA> getmpaById(final int id) {
+        return filmStorage.getMpaById(id);
     }
 
-    private Film findFilmById(final int id) {
-        return filmStorage.getFilms()
-                .stream()
-                .filter(p -> p.getId() == id)
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException(String.format("Film id = %d not found", id)));
+    public List<Genre> getGenres() {
+        return filmStorage.getGenres();
+    }
+
+    public Optional<Genre> getGenreById(final int id) {
+        return filmStorage.getGenreById(id);
     }
 
     private void valid(final Film film){

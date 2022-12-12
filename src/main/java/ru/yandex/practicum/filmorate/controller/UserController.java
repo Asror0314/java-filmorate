@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-
 import javax.validation.*;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @Slf4j
@@ -30,7 +30,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User getUserById(
+    public Optional<User> getUserById(
             @PathVariable final int id
     ){
         log.debug("Получен запрос GET /users/{id}");
@@ -38,7 +38,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User addUser(
+    public Optional<User> addUser(
             @Valid @RequestBody final User user,
             BindingResult result
     ){
@@ -50,7 +50,7 @@ public class UserController {
     }
 
     @PutMapping
-    public User updateUser(
+    public Optional<User> updateUser(
             @Valid @RequestBody final User user,
             BindingResult result
     ){
@@ -79,7 +79,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public User addFriends(
+    public Optional<User> addFriends(
             @PathVariable final int id,
             @PathVariable final int friendId
     ) {
@@ -88,7 +88,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public User deleteFriends(
+    public Optional<User> deleteFriends(
             @PathVariable final int id,
             @PathVariable final int friendId
     ) {

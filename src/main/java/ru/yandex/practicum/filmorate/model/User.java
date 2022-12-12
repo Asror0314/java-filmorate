@@ -12,7 +12,7 @@ import java.util.Set;
 @Data
 public class User {
 
-    private int id;
+    private Integer id;
     private String name;
 
     @Email(message = "Email should be valid")
@@ -24,10 +24,15 @@ public class User {
 
     @Past(message = "Date value cannot be in the future")
     private LocalDate birthday;
-    private final Set<Integer> friends = new HashSet<>();
 
-    public void setFriends(final int id) {
+    private Set<Integer> friends = new HashSet<>();
+
+    public void setFriend(final Integer id) {
         friends.add(id);
+    }
+
+    public void setFriends(Set<Integer> friends) {
+        this.friends = friends;
     }
 
     public Set<Integer> getFriends() {
